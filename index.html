@@ -1,45 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Todo List</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Task Master</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">
-        <i class="fas fa-moon"></i>
-    </button>
-    
-    <div class="container">
-        <h1><i class="fas fa-rocket"></i> Task Master</h1>
-        
-        <div class="input-section">
-            <input type="text" id="todoInput" placeholder="Plan your mission...">
-            <input type="date" id="dueDate">
-            <button class="add-btn" onclick="addTodo()">
-                <i class="fas fa-plus"></i>
-                Add Task
-            </button>
-        </div>
 
-        <div class="filter-section">
-            <button class="filter-btn" onclick="filterTasks('all')">All</button>
-            <button class="filter-btn" onclick="filterTasks('active')">Active</button>
-            <button class="filter-btn" onclick="filterTasks('completed')">Completed</button>
-        </div>
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">
+    <i class="fas fa-moon"></i>
+  </button>
 
-        <ul id="todoList"></ul>
+  <!-- Main App Container -->
+  <main class="container card glass">
+    <header>
+      <h1><i class="fas fa-rocket"></i> Task Master</h1>
+    </header>
 
-        <div class="stats">
-            <span>Total: <span id="totalCount">0</span></span>
-            <span>Completed: <span id="completedCount">0</span></span>
-            <span>Remaining: <span id="remainingCount">0</span></span>
-        </div>
-    </div>
+    <!-- Task Input Section -->
+    <section class="section input-section">
+      <input type="text" id="todoInput" placeholder="What needs to be done?" />
+      <input type="date" id="dueDate" />
+      <button class="btn add-btn" onclick="addTodo()">
+        <i class="fas fa-plus"></i> Add
+      </button>
+    </section>
 
-    <script src="index.js"></script>
+    <!-- Filters -->
+    <section class="section filter-section">
+      <button class="btn filter-btn" onclick="filterTasks('all')">All</button>
+      <button class="btn filter-btn" onclick="filterTasks('active')">Active</button>
+      <button class="btn filter-btn" onclick="filterTasks('completed')">Completed</button>
+    </section>
+
+    <!-- Todo List -->
+    <ul id="todoList" class="todo-list"></ul>
+
+    <!-- Stats -->
+    <footer class="section stats">
+      <span>Total: <span id="totalCount">0</span></span>
+      <span>Completed: <span id="completedCount">0</span></span>
+      <span>Remaining: <span id="remainingCount">0</span></span>
+    </footer>
+  </main>
+
+  <script src="index.js"></script>
 </body>
 </html>
