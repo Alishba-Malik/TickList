@@ -11,8 +11,7 @@
 </head>
 <body>
   <div class="page-wrapper">
-
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle Theme">
+    <button class="theme-toggle" aria-label="Toggle Theme">
       <i class="fas fa-moon"></i>
     </button>
 
@@ -24,16 +23,15 @@
       <section class="section input-section">
         <input type="text" id="todoInput" placeholder="What needs to be done?" />
         <input type="date" id="dueDate" />
-        <button class="btn add-btn" onclick="addTodo()">
+        <button class="btn add-btn">
           <i class="fas fa-plus"></i> Add
         </button>
       </section>
 
-      <!-- Filters -->
       <section class="section filter-section">
-        <button class="btn filter-btn" onclick="filterTasks('all')">All</button>
-        <button class="btn filter-btn" onclick="filterTasks('active')">Active</button>
-        <button class="btn filter-btn" onclick="filterTasks('completed')">Completed</button>
+        <button class="btn filter-btn" data-filter="all">All</button>
+        <button class="btn filter-btn" data-filter="active">Active</button>
+        <button class="btn filter-btn" data-filter="completed">Completed</button>
       </section>
 
       <ul id="todoList" class="todo-list"></ul>
@@ -48,9 +46,8 @@
     <footer class="custom-footer">
       Created by <span class="author-name">Alishba Malik</span>
     </footer>
-
   </div>
 
-  <script src="index.js"></script>
+  <script src="index.js" defer></script>
 </body>
 </html>
