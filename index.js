@@ -1,94 +1,108 @@
+let currentTheme = localStorage.getItem('theme') || 'light';
+
 document.addEventListener('DOMContentLoaded', () => {
-    const todoList = document.getElementById('todoList');
-    const input = document.getElementById('todoInput');
-    const dueDate = document.getElementById('dueDate');
-
-    const themeToggleBtn = document.querySelector('.theme-toggle');
-    const stats = {
-        total: document.getElementById('totalCount'),
-        completed: document.getElementById('completedCount'),
-        remaining: document.getElementById('remainingCount'),
-    };
-
-    let currentTheme = localStorage.getItem('theme') || 'light';
     document.body.setAttribute('data-theme', currentTheme);
     updateThemeIcon();
 
-    themeToggleBtn.addEventListener('click', () => {
-        currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-        document.body.setAttribute('data-theme', currentTheme);
-        localStorage.setItem('theme', currentTheme);
-        updateThemeIcon();
-    });
+    const savedTodos = getTodosFromStorage();
+    renderTodos(savedTodos);
+    updateStats();
+});
 
-    document.querySelector('.add-btn').addEventListener('click', () => {
-        const text = input.value.trim();
-        const date = dueDate.value ? new Date(dueDate.value).toLocaleDateString() : 'No deadline';
-        if (!text) return;
+function toggleTheme() {
+    currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+    document.body.setAttribute('data-theme', currentTheme);
+    localStorage.setItem('theme', currentTheme);
+    updateThemeIcon();
+}
 
+function updateThemeIcon() {
+    const themeIcon = document.querySelector('.theme-toggle i');
+    themeIcon.className = currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+}
+
+function getTodosFromStorage() {
+    return JSON.parse(localStorage.getItem('todos')) || [];
+}
+
+function setTodosToStorage(todos) {
+    localStorage.setItem('todos', JSON.stringify(todos));
+}
+
+function addTodo() {
+    const input = document.getElementById('todoInput');
+    const dueDate = document.getElementById('dueDate');
+    const todoText = input.value.trim();
+
+    if (!todoText) return;
+
+    const date = dueDate.value ? new Date(dueDate.value).toLocaleDateString() : 'No deadline';
+    const newTodo = { text: todoText, dueDate: date, completed: false };
+
+    const todos = getTodosFromStorage();
+    todos.push(newTodo);
+    setTodosToStorage(todos);
+    renderTodos(todos);
+    input.value = '';
+    dueDate.value = '';
+    updateStats();
+}
+
+function renderTodos(todos) {
+    const todoList = document.getElementById('todoList');
+    todoList.innerHTML = '';
+
+    todos.forEach((todo, index) => {
         const li = document.createElement('li');
         li.className = 'todo-item fade-in';
+        if (todo.completed) li.classList.add('completed');
+
         li.innerHTML = `
-            <input type="checkbox" class="checkbox">
-            <span>${escapeHTML(text)}</span>
-            <span class="due-date">${escapeHTML(date)}</span>
-            <button class="delete-btn"><i class="fas fa-trash"></i></button>
+            <input type="checkbox" class="checkbox" onchange="toggleComplete(this, ${index})" ${todo.completed ? 'checked' : ''}>
+            <span>${todo.text}</span>
+            <span class="due-date">${todo.dueDate}</span>
+            <button class="delete-btn" onclick="deleteTodo(${index})">
+                <i class="fas fa-trash"></i>
+            </button>
         `;
         todoList.appendChild(li);
-
-        input.value = '';
-        dueDate.value = '';
-        updateStats();
     });
+}
 
-    todoList.addEventListener('click', (e) => {
-        if (e.target.matches('.delete-btn, .delete-btn *')) {
-            const li = e.target.closest('li');
-            li.classList.add('fade-out');
-            setTimeout(() => {
-                li.remove();
-                updateStats();
-            }, 300);
-        } else if (e.target.matches('.checkbox')) {
-            e.target.closest('li').classList.toggle('completed');
-            updateStats();
-        }
+function toggleComplete(checkbox, index) {
+    const todos = getTodosFromStorage();
+    todos[index].completed = checkbox.checked;
+    setTodosToStorage(todos);
+    renderTodos(todos);
+    updateStats();
+}
+
+function deleteTodo(index) {
+    const todos = getTodosFromStorage();
+    todos.splice(index, 1);
+    setTodosToStorage(todos);
+    renderTodos(todos);
+    updateStats();
+}
+
+function filterTasks(filter) {
+    const items = document.querySelectorAll('#todoList li');
+    items.forEach(item => {
+        const isCompleted = item.classList.contains('completed');
+        item.style.display =
+            filter === 'all' ? 'flex' :
+            filter === 'completed' && isCompleted ? 'flex' :
+            filter === 'active' && !isCompleted ? 'flex' : 'none';
     });
+}
 
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterTasks(btn.textContent.toLowerCase());
-        });
-    });
+function updateStats() {
+    const todos = getTodosFromStorage();
+    const total = todos.length;
+    const completed = todos.filter(t => t.completed).length;
+    const remaining = total - completed;
 
-    function updateThemeIcon() {
-        const icon = themeToggleBtn.querySelector('i');
-        icon.className = currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
-    }
-
-    function filterTasks(filter) {
-        document.querySelectorAll('#todoList li').forEach(item => {
-            const isCompleted = item.classList.contains('completed');
-            item.style.display = (
-                filter === 'all' ||
-                (filter === 'completed' && isCompleted) ||
-                (filter === 'active' && !isCompleted)
-            ) ? 'flex' : 'none';
-        });
-    }
-
-    function updateStats() {
-        const all = document.querySelectorAll('#todoList li');
-        const done = document.querySelectorAll('#todoList li.completed');
-        stats.total.textContent = all.length;
-        stats.completed.textContent = done.length;
-        stats.remaining.textContent = all.length - done.length;
-    }
-
-    function escapeHTML(str) {
-        return str.replace(/[&<>"']/g, m => ({
-            '&': '&amp;', '<': '&lt;', '>': '&gt;',
-            '"': '&quot;', "'": '&#39;'
-        }[m]));
-    }
-});
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('completedCount').textContent = completed;
+    document.getElementById('remainingCount').textContent = remaining;
+}
