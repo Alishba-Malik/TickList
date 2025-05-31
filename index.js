@@ -106,3 +106,9 @@ function updateStats() {
     document.getElementById('completedCount').textContent = completed;
     document.getElementById('remainingCount').textContent = remaining;
 }
+
+window.addTodo = addTodo;
+window.toggleComplete = toggleComplete;
+window.deleteTodo = deleteTodo;
+window.filterTasks = filterTasks;
+window.toggleTheme = toggleTheme;
