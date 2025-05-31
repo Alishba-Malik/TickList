@@ -1,3 +1,3 @@
 FROM nginx:alpine
-COPY . /usr/shre/nginx/html
+COPY . /usr/share/nginx/html
 EXPOSE 8080
